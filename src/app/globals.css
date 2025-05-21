@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-white min-h-screen;
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-background-light transition-colors duration-200 rounded-lg;
+  }
+
+  .sidebar-link.active {
+    @apply bg-background-light text-accent-orange;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-accent-orange text-white rounded-lg hover:bg-opacity-90 transition-colors duration-200 shadow-glow-orange hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-accent-yellow text-black rounded-lg hover:bg-opacity-90 transition-colors duration-200 shadow-glow-yellow hover:shadow-none;
+  }
+
+  .card {
+    @apply bg-background-light rounded-lg p-6 shadow-lg;
+  }
+
+  .input-field {
+    @apply bg-background-lighter border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-orange focus:border-transparent;
+  }
+}
