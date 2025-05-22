@@ -1,8 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   BookOpen,
@@ -11,6 +11,7 @@ import {
   LogIn,
   LogOut,
 } from 'lucide-react';
+import AuthService from '@/lib/api/auth';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -25,6 +26,22 @@ const sidebarItems = [
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await AuthService.logout();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Still redirect to login even if the API call fails
+      router.push('/login');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -52,13 +69,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           })}
           
           <div className="mt-6 pt-6 border-t border-gray-800">
-            <Link href="/login" className="sidebar-link">
-              <LogIn className="w-5 h-5" />
-              <span>Login</span>
-            </Link>
-            <button className="sidebar-link w-full">
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="sidebar-link w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <LogOut className="w-5 h-5" />
-              <span>Logout</span>
+              <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
             </button>
           </div>
         </nav>
