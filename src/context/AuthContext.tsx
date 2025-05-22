@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (userData: { name: string; email: string; password: string; password_confirmation: string }) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (userData: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,6 +103,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    // Update localStorage only on client side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -111,6 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
+        updateUser,
       }}
     >
       {children}

@@ -32,6 +32,33 @@ export interface ApiError {
   status?: number;
 }
 
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateUserData {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  role: string;
+}
+
+export interface UpdateUserData extends Partial<CreateUserData> {}
+
+export interface UpdateProfileData {
+  name?: string;
+  email?: string;
+  current_password?: string;
+  new_password?: string;
+  new_password_confirmation?: string;
+}
+
 class AuthService {
   private baseUrl = API_CONFIG.BASE_URL;
 
@@ -124,8 +151,8 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       await this.request('/auth/logout', {
-        method: 'POST',
-      });
+      method: 'POST',
+    });
     } finally {
       // Clear auth data regardless of API response
       localStorage.removeItem('token');
@@ -141,6 +168,47 @@ class AuthService {
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
+  }
+
+  // Get all users (admin only)
+  async getAllUsers(): Promise<{ data: User[] }> {
+    return this.request('/admin/users');
+  }
+
+  // Get a single user
+  async getUser(id: number): Promise<{ data: User }> {
+    return this.request(`/admin/users/${id}`);
+  }
+
+  // Create a new user (admin only)
+  async createUser(data: CreateUserData): Promise<{ data: User }> {
+    return this.request('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Update a user
+  async updateUser(id: number, data: UpdateUserData): Promise<{ data: User }> {
+    return this.request(`/admin/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Delete a user
+  async deleteUser(id: number): Promise<void> {
+    await this.request(`/admin/users/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Update user profile
+  async updateProfile(data: UpdateProfileData): Promise<{ data: AuthResponse['user'] }> {
+    return this.request('/user/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   }
 }
 

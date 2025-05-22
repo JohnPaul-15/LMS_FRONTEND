@@ -74,7 +74,7 @@ export default function RegisterPage() {
       const { terms, ...registerData } = data;
       const response = await AuthService.register(registerData);
 
-      if (response.status) {
+      if (response.user) {
         // Redirect to login page on successful registration
         router.push('/login?registered=true');
       }
